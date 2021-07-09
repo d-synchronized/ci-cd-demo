@@ -5,7 +5,7 @@
 
 	<groupId>com.example</groupId>
 	<artifactId>ci-cd-demo</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<packaging>jar</packaging>
 
 	<name>ci-cd-demo</name>
@@ -19,6 +19,7 @@
 		<connection>scm:git:https://github.com/d-synchronized/ci-cd-demo.git</connection>
 		<url>https://github.com/d-synchronized/ci-cd-demo</url>
 		<developerConnection>scm:git:https://github.com/d-synchronized/ci-cd-demo.git</developerConnection>
+		<tag>v0.0.1</tag>
 	</scm>
 
 	<build>
@@ -33,13 +34,17 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
-				<configuration>
-					<tagNameFormat>v@{project.version}</tagNameFormat>
-					<autoVersionSubmodules>true</autoVersionSubmodules>
-					<releaseProfiles>releases</releaseProfiles>
-				</configuration>
+				<version>2.5.1</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.maven.shared</groupId>
+						<artifactId>maven-invoker</artifactId>
+						<version>2.2</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 		</plugins>
+
 	</build>
 
 
