@@ -5,15 +5,15 @@ pipeline {
         stage('Build') {
             steps {
                 script{
-                    sh 'mvn -version'
-                    sh 'mvn clean install -DskipTests'	
+                    bat 'mvn -version'
+                    bat 'mvn clean install -DskipTests'	
                 }
             }
         }
         stage('Test') {
             steps {
                 script{
-                   sh 'mvn test'
+                   bat 'mvn test'
                 }
             }
         }
