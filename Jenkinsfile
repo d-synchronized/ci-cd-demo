@@ -1,21 +1,8 @@
-pipeline {
-    agent any
-    
-    stages {
-        stage('Build') {
-            steps {
-                script{
-                    bat 'mvn -version'
-                    bat 'mvn clean install -DskipTests'	
-                }
-            }
-        }
-        stage('Test') {
-            steps {
-                script{
-                   bat 'mvn test'
-                }
-            }
-        }
-    }   
+node ('worker_node') {
+   //Stages
+   stage('Source') { 
+        //Steps
+        bat([script: 'echo Cloning the code!'])
+        git ([branch: 'day-1', url: 'https://github.com/d-synchronized/ci-cd-demo.git'])
+      }
 }
