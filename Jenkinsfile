@@ -2,7 +2,10 @@ node ('worker_node') {
    //Stages
    stage('Source') { 
         //Steps
-        bat([script: 'echo Cloning the code!'])
+        bat([script: 'echo ****cloning the code****'])
         git ([branch: 'day-1', url: 'https://github.com/d-synchronized/ci-cd-demo.git'])
-      }
+   }
+   stage('Build') {
+        bat([script: 'echo ****build command goes here****']) 
+   }
 }
