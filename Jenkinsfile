@@ -9,4 +9,5 @@ node ('worker_node') {
         bat([script: 'echo ****build command goes here****']) 
         bat([script: 'mvn clean install']) 
    }
+   properties([pipelineTriggers([upstream('demo-job')])])
 }
