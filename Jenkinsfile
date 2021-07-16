@@ -111,7 +111,7 @@ node () { //node('worker_node')
        
        mail to: 'd.synchronized@gmail.com', cc: 'vision4cloud@gmail.com,d.xcption13@gmail.com', bcc: 'slayer4cloud@gmail.com', 
             body: "tatus for ${env.JOB_NAME} (${env.JOB_URL}) is ${currentBuild.result}", 
-            subject: "Status of pipeline : ${currentBuild.fullDisplayName}", 
+            subject: "Status of pipeline : ${currentBuild.fullDisplayName}"
        
        echo '****POST******BUILD*****ACTION*********END*********'
        echo '***************************************************'
