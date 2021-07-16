@@ -30,7 +30,7 @@ node ('worker_node') {
    
         def inputParams
         try{
-             timeout(time: 30, unit: 'SECONDS') {
+             timeout(time: 10, unit: 'SECONDS') {
                  inputParams = input message: 'Is this Pre Release', ok: 'Yes', parameters: [
                             booleanParam(defaultValue: true, description: 'Is Release?', name: 'releaseType'),
                             choice(choices: ['development', 'master'], description: 'Choose the branch', name: 'branchInput'),
