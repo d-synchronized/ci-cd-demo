@@ -68,7 +68,7 @@ node () { //node('worker_node')
    }
    
    stage('Parallel Demo') {
-      def StepsToRun = [:]
+      def stepsToRun = [:]
       for(int i = 1; i < 5 ; i++){
           stepsToRun["Step ${i}"] = {
              node {
