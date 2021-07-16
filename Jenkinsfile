@@ -81,6 +81,15 @@ node () { //node('worker_node')
       parallel stepsToRun
    }
    
+   stage('Conditional Branching') {
+      def isPreRelease = params.releaseType;
+      if(releaseType){
+         echo 'Build For Production'
+      }else{
+         echo 'Build For DEV & QA' 
+      }
+   }
+   
    stage('Build') {
         bat([script: 'echo ****build command goes here****']) 
         bat([script: 'mvn clean install']) 
