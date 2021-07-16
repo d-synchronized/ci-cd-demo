@@ -12,7 +12,7 @@ node () { //node('worker_node')
            choice(choices: ['development', 'master'], description: 'Choose the branch', name: 'branchInput'),
            string(description: 'Reason for the Build', name: 'buildReason', trim: true)
       ]),
-      disableConcurrentBuilds()
+      //disableConcurrentBuilds()
    ])
    //Stages
    stage('Pre Run'){
@@ -52,6 +52,7 @@ node () { //node('worker_node')
         echo 'Branch Name Selected is : ' + inputParams.branchInput
         echo 'Reason for the build is : ' + inputParams.buildReason
    }
+   
    stage('Wait Until') {
      echo '***************Wait Until Step******************'
      timeout(time: 15, unit: 'SECONDS') {
@@ -65,6 +66,20 @@ node () { //node('worker_node')
         }
      }
    }
+   
+   stage('Parallel Demo') {
+      def StepsToRun = [:]
+      for(int i = 1; i < 5 ; i++){
+          stepsToRun["Step ${i}"] = {
+             node {
+                echo 'Step Started'
+                sleep 5
+                echo 'Step Completed'
+             }
+          }
+      }
+   }
+   
    stage('Build') {
         bat([script: 'echo ****build command goes here****']) 
         bat([script: 'mvn clean install']) 
