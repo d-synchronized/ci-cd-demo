@@ -11,7 +11,8 @@ node () { //node('worker_node')
            booleanParam(defaultValue: true, description: 'Is Release?', name: 'releaseType'),
            choice(choices: ['development', 'master'], description: 'Choose the branch', name: 'branchInput'),
            string(description: 'Reason for the Build', name: 'buildReason', trim: true)
-      ])
+      ]),
+      disableConcurrentBuilds()
    ])
    //Stages
    stage('Pre Run'){
