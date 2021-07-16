@@ -1,5 +1,5 @@
 //Groovy Pipeline
-node ('worker_node') {
+node (any) {
    properties([
       pipelineTriggers([
          upstream('demo-job, ') //Build after other projects are built
