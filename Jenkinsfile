@@ -29,12 +29,18 @@ node ('worker_node') {
    
    
         def inputParams
-        timeout(time: 30, unit: 'SECONDS') {
-           inputParams = input message: 'Is this Pre Release', ok: 'Yes', parameters: [
+        try{
+             timeout(time: 30, unit: 'SECONDS') {
+                 inputParams = input message: 'Is this Pre Release', ok: 'Yes', parameters: [
                             booleanParam(defaultValue: true, description: 'Is Release?', name: 'releaseType'),
                             choice(choices: ['development', 'master'], description: 'Choose the branch', name: 'branchInput'),
                             string(description: 'Reason for the Build', name: 'buildReason', trim: true)
-                         ] 
+                            ] 
+             }
+        } catch(err){
+            inputParams.releaseType = 'Test-Release'
+            inputParams.branchInput = 'Tag V-1.0'
+            inputParams.buildReason = 'Demo for Release'     
         }
         echo '*****Will print the input values now*******'
         echo inputParams
