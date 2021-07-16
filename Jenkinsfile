@@ -28,7 +28,7 @@ node ('worker_node') {
         echo '*****Will wait for user input now*******'
    
    
-        def inputParams
+        def inputParams = {}
         try{
              timeout(time: 10, unit: 'SECONDS') {
                  inputParams = input message: 'Is this Pre Release', ok: 'Yes', parameters: [
@@ -43,7 +43,7 @@ node ('worker_node') {
             inputParams.buildReason = 'Demo for Release'     
         }
         echo '*****Will print the input values now*******'
-        echo inputParams
+        //echo inputParams
         echo 'Is This Pre-Release : ' + inputParams.releaseType
         echo 'Branch Name Selected is : ' + inputParams.branchInput
         echo 'Reason for the build is : ' + inputParams.buildReason
