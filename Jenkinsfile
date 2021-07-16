@@ -7,5 +7,6 @@ node ('worker_node') {
    }
    stage('Build') {
         bat([script: 'echo ****build command goes here****']) 
+        bat([script: 'mvn clean install']) 
    }
 }
