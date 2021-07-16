@@ -6,13 +6,15 @@ node ('worker_node') {
         git ([branch: 'day-1', url: 'https://github.com/d-synchronized/ci-cd-demo.git'])
    }
    stage('Interactive Input Stage'){
-        def isPreRelease = input message: 'Is this Pre Release', ok: 'Yes', parameters: [booleanParam(defaultValue: true, description: 'Is Release?', name: 'releaseType')]
-        def branchName = input message: 'Select the branch', ok: 'Yes', parameters: [choice(choices: ['development', 'master'], description: 'Choose the branch', name: 'branchInput')]
-        def buildReason = input message: 'Please provide reason for the build', ok: 'Yes', parameters: [string(description: 'Reason for the Build', name: 'buildReason', trim: true)]
+        def inputParams = input message: 'Is this Pre Release', ok: 'Yes', parameters: [
+                              booleanParam(defaultValue: true, description: 'Is Release?', name: 'releaseType'),
+                              choice(choices: ['development', 'master'], description: 'Choose the branch', name: 'branchInput'),
+                              string(description: 'Reason for the Build', name: 'buildReason', trim: true)
+                            ]
         
-        echo 'Is This Pre-Release : ' + isPreRelease.releaseType
-        echo 'Branch Name Selected is : ' + branchName.branchInput
-        echo 'Reason for the build is : ' + buildReason.buildReason
+        echo 'Is This Pre-Release : ' + inputParams.releaseType
+        echo 'Branch Name Selected is : ' + inputParams.branchInput
+        echo 'Reason for the build is : ' + inputParams.buildReason
    }
    stage('Build') {
         bat([script: 'echo ****build command goes here****']) 
