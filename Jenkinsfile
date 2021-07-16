@@ -1,4 +1,6 @@
+//Groovy Pipeline
 node ('worker_node') {
+   
    //Stages
    stage('Source') { 
         //Steps
@@ -26,6 +28,11 @@ node ('worker_node') {
          //,cron('*/15 * * * *')
          ,githubPush() //GitHub hook trigger for GITScm polling
          //,pollSCM('*/15 * * * *') // Very expensive operation
+      ]),
+      parameters([
+           booleanParam(defaultValue: true, description: 'Is Release?', name: 'releaseType'),
+           choice(choices: ['development', 'master'], description: 'Choose the branch', name: 'branchInput'),
+           string(description: 'Reason for the Build', name: 'buildReason', trim: true)
       ])
    ])
 }
