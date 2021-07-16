@@ -9,5 +9,11 @@ node ('worker_node') {
         bat([script: 'echo ****build command goes here****']) 
         bat([script: 'mvn clean install']) 
    }
-   properties([pipelineTriggers([upstream('demo-job, ')])])
+   properties([
+      pipelineTriggers([
+         upstream('demo-job, ') //Build after other projects are built
+         //,cron('*/15 * * * *')
+         ,githubPush() //GitHub hook trigger for GITScm polling
+      ])
+   ])
 }
