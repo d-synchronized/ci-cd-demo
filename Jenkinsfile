@@ -79,7 +79,7 @@ node () { //node('worker_node')
                }
             }
         }
-        parallel stepsToRun
+        //parallel stepsToRun
      }
    
      stage('Conditional Branching') {
@@ -98,10 +98,11 @@ node () { //node('worker_node')
      }
      
      
-     currentBuild.result = 'Build Success'
+     currentBuild.result = 'SUCCESS'
    } catch(Exception err) {
      //FAILURE
-     currentBuild.result = 'Build Failed'
+     echo 'Some error occurred during the build ${err}'
+     currentBuild.result = 'FALIURE'
    } finally {
        //post build
        echo '***************************************************'
