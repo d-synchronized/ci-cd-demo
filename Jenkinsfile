@@ -48,6 +48,19 @@ node ('worker_node') {
         echo 'Branch Name Selected is : ' + inputParams.branchInput
         echo 'Reason for the build is : ' + inputParams.buildReason
    }
+   stage('Wait Until') {
+     echo '***************Wait Until Step******************'
+     timeout(time: 15, unit: 'SECONDS') {
+        waitUntil {
+           try{
+               bat "curl https://www.keycdn.com"
+               return true
+           } catch(err) {
+               return false
+           }
+        }
+     }
+   }
    stage('Build') {
         bat([script: 'echo ****build command goes here****']) 
         bat([script: 'mvn clean install']) 
