@@ -78,6 +78,7 @@ node () { //node('worker_node')
              }
           }
       }
+      parallel stepsToRun
    }
    
    stage('Build') {
