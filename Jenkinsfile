@@ -38,6 +38,9 @@ node ('worker_node') {
                             ] 
              }
         } catch(err){
+            echo 'Build sleeping for 5 seconds'
+            sleep 5
+            echo 'Build resuming after 5 seconds'
             inputParams.releaseType = 'Test-Release'
             inputParams.branchInput = 'Tag V-1.0'
             inputParams.buildReason = 'Demo for Release'     
@@ -64,5 +67,9 @@ node ('worker_node') {
    stage('Build') {
         bat([script: 'echo ****build command goes here****']) 
         bat([script: 'mvn clean install']) 
+        milestone label: 'After Build', ordinal: 1
+   }
+   stage('Notification') {
+     echo 'Notify build failures'
    }
 }
