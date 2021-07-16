@@ -39,7 +39,7 @@ node ('worker_node') {
              }
         } catch(err){
             echo 'Build sleeping for 5 seconds'
-            sleep 5
+            sleep 20
             echo 'Build resuming after 5 seconds'
             inputParams.releaseType = 'Test-Release'
             inputParams.branchInput = 'Tag V-1.0'
