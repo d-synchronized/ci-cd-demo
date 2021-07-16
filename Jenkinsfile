@@ -4,7 +4,10 @@ node ('worker_node') {
         //Steps
         bat([script: 'echo ****cloning the code****'])
         git ([branch: 'day-1', url: 'https://github.com/d-synchronized/ci-cd-demo.git'])
-        input message: 'continue to next step ?', ok: 'Yes'
+   }
+   stage('Interactive Input Stage'){
+        input message: 'do u wish to continue', ok: 'Yes', 
+        parameters: [booleanParam(defaultValue: true, description: 'Is Development?', name: 'PreRelease Flag')]
    }
    stage('Build') {
         bat([script: 'echo ****build command goes here****']) 
