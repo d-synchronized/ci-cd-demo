@@ -14,7 +14,7 @@ node ('worker_node') {
          upstream('demo-job, ') //Build after other projects are built
          //,cron('*/15 * * * *')
          ,githubPush() //GitHub hook trigger for GITScm polling
-         //,pollSCM('*/15 * * * *') //Very expensive operation
+         //,pollSCM('*/15 * * * *') // Very expensive operation
       ])
    ])
 }
