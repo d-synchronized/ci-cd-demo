@@ -9,11 +9,13 @@ node () { //node('worker_node')
       ]),
       parameters([
            booleanParam(defaultValue: true, description: 'Is Release?', name: 'releaseType'),
-           choice(choices: ['development', 'master'], description: 'Choose the branch', name: 'branchInput'),
+           choice(choices: ['development', 'master' , 'day-1'], description: 'Choose the branch', name: 'branchInput'),
            string(description: 'Reason for the Build', name: 'buildReason', trim: true)
       ]),
       //disableConcurrentBuilds()
    ])
+   
+   def repoSSHUrl = 'git@github.com:d-synchronized/ci-cd-demo.git'
    try {
       //Stages
       stage('Pre Run'){
@@ -24,12 +26,12 @@ node () { //node('worker_node')
       stage('Source') { 
         //Steps
           bat([script: 'echo ****cloning the code****'])
-          git ([branch: 'day-1', url: 'https://github.com/d-synchronized/ci-cd-demo.git'])
+          //git ([branch: 'day-1', url: 'https://github.com/d-synchronized/ci-cd-demo.git'])
+          git ([branch: ${params.branchInput}, url: repoSSHUrl])
       }
       stage('Interactive Input Stage'){
-          echo '*****Will wait for user input now*******'
-   
-   
+          when(${params.branchInput} != "development"){
+             echo '*****Will wait for user input now*******'
           def inputParams = {}
           try{
                timeout(time: 10, unit: 'SECONDS') {
@@ -52,6 +54,7 @@ node () { //node('worker_node')
           echo 'Is This Pre-Release : ' + inputParams.releaseType
           echo 'Branch Name Selected is : ' + inputParams.branchInput
           echo 'Reason for the build is : ' + inputParams.buildReason
+          }
      }
    
      stage('Wait Until') {
@@ -95,6 +98,15 @@ node () { //node('worker_node')
           bat([script: 'echo ****build command goes here****']) 
           bat([script: 'mvn clean install']) 
           milestone label: 'After Build', ordinal: 1
+     }
+     
+     stage('Update Source') {
+          sh "git config user.name 'Dishant Anand'"
+          sh "git config user.email d.synchronized@gmail.com"
+          
+          sshagent(['github-dsync']) {
+             sh "git config user.email d.synchronized@gmail.com"
+          }
      }
      
      
