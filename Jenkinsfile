@@ -27,7 +27,9 @@ node () { //node('worker_node')
         //Steps
           bat([script: 'echo ****cloning the code****'])
           //git ([branch: 'day-1', url: 'https://github.com/d-synchronized/ci-cd-demo.git'])
-          git ([branch: ${params.branchInput}, url: repoSSHUrl])
+          sshagent(['github-dsync']) {
+             git ([branch: ${params.branchInput}, url: repoSSHUrl])
+          }
       }
       stage('Interactive Input Stage'){
           when(${params.branchInput} != "development"){
