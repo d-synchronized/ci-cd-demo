@@ -113,7 +113,7 @@ node () { //node('worker_node')
      currentBuild.result = 'SUCCESS'
    } catch(Exception err) {
      //FAILURE
-     echo 'Some error occurred during the build ${err}'
+     echo 'Some error occurred during the build ' + err
      currentBuild.result = 'FALIURE'
    } finally {
        //post build
