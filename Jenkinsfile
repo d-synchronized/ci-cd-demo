@@ -105,7 +105,7 @@ node () { //node('worker_node')
           sh "git config user.email d.synchronized@gmail.com"
           
           sshagent(['github-dsync']) {
-             sh "git config user.email d.synchronized@gmail.com"
+              echo 'Some SSH operation'
           }
      }
      
