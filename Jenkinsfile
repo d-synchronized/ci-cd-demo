@@ -27,7 +27,7 @@ node () { //node('worker_node')
         //Steps
           bat([script: 'echo ****cloning the code****'])
           //git ([branch: 'day-1', url: 'https://github.com/d-synchronized/ci-cd-demo.git'])
-          sshagent(['github-dsync']) {
+          sshagent(['github-credentials']) {
              git ([branch: ${params.branchInput}, url: repoSSHUrl])
           }
       }
@@ -103,10 +103,10 @@ node () { //node('worker_node')
      }
      
      stage('Update Source') {
-          sh "git config user.name 'Dishant Anand'"
-          sh "git config user.email d.synchronized@gmail.com"
+          bat "git config user.name 'Dishant Anand'"
+          bat "git config user.email d.synchronized@gmail.com"
           
-          sshagent(['github-dsync']) {
+          sshagent(['github-credentials']) {
               echo 'Some SSH operation'
           }
      }
