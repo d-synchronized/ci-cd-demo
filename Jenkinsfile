@@ -8,30 +8,26 @@ node () { //node('worker_node')
       disableConcurrentBuilds()
    ])
    
-   def repoSSHUrl = 'git@github.com:d-synchronized/ci-cd-demo.git'
+   def repoUrl = 'https://github.com/d-synchronized/ci-cd-demo.git'
    try {
-      stage('Source') { 
-        //Steps
-          bat([script: 'echo ****cloning the code****'])
-          //git ([branch: 'day-1', url: 'https://github.com/d-synchronized/ci-cd-demo.git'])
-          //git branch: "${params.BRANCH}", credentialsId: 'git-ssh', url: repoSSHUrl
-          
+      stage('Checkout Source Code') { 
+          echo '***Checking out source code from repo url ${repoSSHUrl},branchName ${params.BRANCH}***'
           checkout([$class: 'GitSCM', 
                     branches: [[name: "*/${params.BRANCH}"]], 
                     extensions: [], 
-                    userRemoteConfigs: [[credentialsId: 'git-ssh', url: repoSSHUrl]]])
+                    userRemoteConfigs: [[credentialsId: 'github-credentials', url: "${repoUrl}"]]])
       }
       
       
-      stage('Update Source') {
+      stage('Create TAG'){
           bat "git config user.name 'Dishant Anand'"
           bat "git config user.email d.synchronized@gmail.com"
-          sshagent(['git-ssh']) {
-             //bat "git tag -a v${params.buildReason} -m \"pushing tag v${params.buildReason}\""
-             //bat "git push ${repoSSHUrl} --tags"
+          withCredentials([usernameColonPassword(credentialsId: 'github-account', variable: '')]) {
+             bat "git tag -a V-1.0.0 -m \"pushing tag\""
+             bat "git push ${repoUrl} --tags"
           }
-          
-     }
+      }
+      
    
    
      stage('Conditional Branching') {
