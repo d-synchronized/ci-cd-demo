@@ -3,7 +3,6 @@ node () { //node('worker_node')
    properties([
       parameters([
            gitParameter(branchFilter: 'origin/(.*)', defaultValue: 'master', name: 'BRANCH', type: 'PT_BRANCH'),
-           booleanParam(defaultValue: false, description: 'Deploy To Production', name: 'RELEASE'),
            choice(choices: ['DEV', 'QA' , 'PROD'], description: 'Choose the branch', name: 'ENVIRONMENT'),
       ]),
       disableConcurrentBuilds()
@@ -16,7 +15,7 @@ node () { //node('worker_node')
           bat([script: 'echo ****cloning the code****'])
           //git ([branch: 'day-1', url: 'https://github.com/d-synchronized/ci-cd-demo.git'])
           //git branch: "${params.BRANCH}", credentialsId: 'git-ssh', url: repoSSHUrl
-          
+          echo '${params.BRANCH}'
           
           checkout([$class: 'GitSCM', 
                     branches: [[name: '*/master']], 
@@ -29,8 +28,8 @@ node () { //node('worker_node')
           bat "git config user.name 'Dishant Anand'"
           bat "git config user.email d.synchronized@gmail.com"
           sshagent(['git-ssh']) {
-             bat "git tag -a v${params.buildReason} -m \"pushing tag v${params.buildReason}\""
-             bat "git push ${repoSSHUrl} --tags"
+             //bat "git tag -a v${params.buildReason} -m \"pushing tag v${params.buildReason}\""
+             //bat "git push ${repoSSHUrl} --tags"
           }
           
      }
