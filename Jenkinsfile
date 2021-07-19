@@ -23,7 +23,7 @@ node () { //node('worker_node')
           bat "git config user.name 'Dishant Anand'"
           bat "git config user.email d.synchronized@gmail.com"
           withCredentials([usernamePassword(credentialsId: 'github-account', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-             VERSION='git describe --abbrev=0 --tags'
+             VERSION = sh(returnStdout:  true, script: 'git describe --abbrev=0 --tags').trim()
              echo "${VERSION}"
              VERSION_BITS=VERSION.tokenize(".")
              echo "${VERSION_BITS}"
