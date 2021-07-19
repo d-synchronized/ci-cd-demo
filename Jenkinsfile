@@ -22,11 +22,11 @@ node () { //node('worker_node')
       stage('Create TAG'){
           bat "git config user.name 'Dishant Anand'"
           bat "git config user.email d.synchronized@gmail.com"
-          withCredentials([usernameColonPassword(credentialsId: 'github-account', variable: 'CREDENTIAL_ID')]) {
+          withCredentials([usernamePassword(credentialsId: 'github-account', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
              echo "***TAG CREATION STARTED***"
-             bat "git tag -a V-1.0.2 -m \"pushing tag\""
+             bat "git tag -a V-1.0.3 -m \"pushing tag\""
              echo "***TAG Created***"
-             //bat "git push https://${github-account}@github.com/d-synchronized/ci-cd-demo.git --tags"
+             bat "git push https://${env.GIT_USERNAME}:${env.GIT_PASSWORD}@github.com/d-synchronized/ci-cd-demo.git --tags"
              bat "git push origin HEAD:${params.BRANCH} --tags"
              echo "***TAG CREATION COMPLETE***"
           }
