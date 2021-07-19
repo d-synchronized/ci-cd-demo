@@ -10,7 +10,7 @@ node () { //node('worker_node')
       parameters([
            booleanParam(defaultValue: true, description: 'Is Release?', name: 'releaseType'),
          gitParameter(branchFilter: 'origin/(.*)', defaultValue: 'master', name: 'BRANCH', type: 'PT_BRANCH'),
-           choice(choices: ['development', 'master' , 'day-1'], description: 'Choose the branch', name: 'branchInput'),
+           choice(choices: ['development', 'master' , 'day-1', 'day-2'], description: 'Choose the branch', name: 'branchInput'),
            string(description: 'Reason for the Build', name: 'buildReason', trim: true)
       ]),
       //disableConcurrentBuilds()
