@@ -23,11 +23,28 @@ node () { //node('worker_node')
           bat "git config user.name 'Dishant Anand'"
           bat "git config user.email d.synchronized@gmail.com"
           withCredentials([usernamePassword(credentialsId: 'github-account', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+             VERSION='git describe --abbrev=0 --tags'
+             echo "${VERSION}"
+             VERSION_BITS=$VERSION.tokenize(".")
+             echo "${VERSION_BITS}"
+
+             //get number parts and increase last one by 1
+             VNUM1=${VERSION_BITS[0]}
+             VNUM2=${VERSION_BITS[1]}
+             VNUM3=${VERSION_BITS[2]}
+             VNUM3=$((VNUM3+1))
+             echo "${VNUM3}"
+
+             //create new tag
+             NEW_TAG="$VNUM1.$VNUM2.$VNUM3"
+
+             echo "Updating $VERSION to $NEW_TAG"
+          
+          
              echo "***TAG CREATION STARTED***"
-             bat "git tag -a V-1.0.5 -m \"pushing tag\""
+             bat "git tag -a ${NEW_TAG} -m \"pushing tag\""
              echo "***TAG Created***"
-             //bat "git push https://${env.GIT_USERNAME}:${env.GIT_PASSWORD}@github.com/d-synchronized/ci-cd-demo.git --tags"
-             bat "GIT_ASKPASS=true git push origin HEAD:${params.BRANCH} --tags"
+             bat "git push https://${env.GIT_USERNAME}:${env.GIT_PASSWORD}@github.com/d-synchronized/ci-cd-demo.git --tags"
              echo "***TAG CREATION COMPLETE***"
           }
       }
