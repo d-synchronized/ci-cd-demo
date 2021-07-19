@@ -9,6 +9,7 @@ node () { //node('worker_node')
    ])
    
    def repoUrl = 'https://github.com/d-synchronized/ci-cd-demo.git'
+   def createTag = false;
    try {
       stage('Checkout Source Code') { 
           echo "***Checking out source code from repo url ${repoUrl},branchName ${params.BRANCH}***"
@@ -20,46 +21,34 @@ node () { //node('worker_node')
       
       
       stage('Create TAG'){
-          bat "git config user.name 'Dishant Anand'"
-          bat "git config user.email d.synchronized@gmail.com"
-          withCredentials([usernamePassword(credentialsId: 'github-account', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-             VERSION = sh(returnStdout:  true, script: 'git describe --abbrev=0 --tags').trim()
-             echo "${VERSION}"
-             VERSION_BITS=VERSION.tokenize(".")
-             echo "${VERSION_BITS}"
-
-             //get number parts and increase last one by 1
-             VNUM1="${VERSION_BITS[0]}"
-             VNUM2="${VERSION_BITS[1]}"
-             VNUM3="${VERSION_BITS[2]}"
-             echo "initial value is ${VNUM3}"
-             VNUM3= VNUM3?.isInteger() ? VNUM3.toInteger() + 1 : null
-             echo "${VNUM3}"
-
-             //create new tag
-             NEW_TAG="${VNUM1}.${VNUM2}.${VNUM3}"
-
-             echo "Updating ${VERSION} to ${NEW_TAG}"
+          createTag = "${params.ENVIRONMENT}" == 'PROD' ? true : false;
           
+          if(createTag){
+             //Drop SNAPSHOT
+             bat "mvn versions:set -DremoveSnapshot -DgenerateBackupPoms=false"
           
-             echo "***TAG CREATION STARTED***"
-             bat "git tag -a ${NEW_TAG} -m \"pushing tag\""
-             echo "***TAG Created***"
-             bat "git push https://${env.GIT_USERNAME}:${env.GIT_PASSWORD}@github.com/d-synchronized/ci-cd-demo.git --tags"
-             echo "***TAG CREATION COMPLETE***"
+             bat "git config user.name 'Dishant Anand'"
+             bat "git config user.email d.synchronized@gmail.com"
+             withCredentials([usernamePassword(credentialsId: 'github-account', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                VERSION = sh(returnStdout:  true, script: 'git describe --abbrev=0 --tags').trim()
+                VERSION_BITS=VERSION.tokenize(".")
+                VNUM1="${VERSION_BITS[0]}"
+                VNUM2="${VERSION_BITS[1]}"
+                VNUM3="${VERSION_BITS[2]}"
+                VNUM3= VNUM3?.isInteger() ? VNUM3.toInteger() + 1 : null
+                NEW_TAG="${VNUM1}.${VNUM2}.${VNUM3}"
+                echo "***Upgrading TAG from ${VERSION} to ${NEW_TAG}***"
+                bat "git tag -a ${NEW_TAG} -m \"pushing tag ${NEW_TAG}\""
+                echo "***Pushing the TAG ${NEW_TAG} to the repository***"
+                bat "git push https://${env.GIT_USERNAME}:${env.GIT_PASSWORD}@github.com/d-synchronized/ci-cd-demo.git --tags"
+                echo "***TAG CREATION COMPLETE***"
+             }//with credentials ends here
+          } else {
+              echo "***TAG creation skipped for the environment ${params.ENVIRONMENT}***"
           }
+          
       }
       
-   
-   
-     stage('Conditional Branching') {
-        def isPreRelease = params.releaseType;
-        if(releaseType){
-           echo 'Build For Production'
-        }else{
-           echo 'Build For DEV & QA' 
-        }
-     }
    
      stage('Build') {
           bat([script: 'echo ****build command goes here****']) 
@@ -74,6 +63,7 @@ node () { //node('worker_node')
      echo 'Some error occurred during the build ' + err
      currentBuild.result = 'FALIURE'
    } finally {
+       deleteDir()
        //post build
        echo '***************************************************'
        echo '***************************************************'
