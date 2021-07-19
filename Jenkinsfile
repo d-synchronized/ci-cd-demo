@@ -35,7 +35,7 @@ node () { //node('worker_node')
           bat "git config user.name 'Dishant Anand'"
           bat "git config user.email d.synchronized@gmail.com"
           bat "git tag -a v${params.buildReason} -m \"pushing tag v${params.buildReason}\""
-          bat "git push ${repoSSHUrl} --tags'"
+          bat "git push --tags'"
           //swithCredentials([sshUserPrivateKey(credentialsId: 'git-ssh', keyFileVariable: 'git-ssh')]) {
           //   bat "git tag -a V-${params.buildReason}"
           //   bat "git push ${repoSSHUrl} --tags'"
