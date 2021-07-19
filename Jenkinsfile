@@ -2,10 +2,9 @@
 node () { //node('worker_node')
    properties([
       parameters([
-           booleanParam(defaultValue: true, description: 'Is Release?', name: 'releaseType'),
            gitParameter(branchFilter: 'origin/(.*)', defaultValue: 'master', name: 'BRANCH', type: 'PT_BRANCH'),
-           choice(choices: ['development', 'master' , 'day-1'], description: 'Choose the branch', name: 'branchInput'),
-           string(description: 'Reason for the Build', name: 'buildReason', trim: true)
+           booleanParam(defaultValue: false, description: 'Deploy To Production', name: 'RELEASE'),
+           choice(choices: ['DEV', 'QA' , 'PROD'], description: 'Choose the branch', name: 'ENVIRONMENT'),
       ]),
       disableConcurrentBuilds()
    ])
@@ -16,7 +15,13 @@ node () { //node('worker_node')
         //Steps
           bat([script: 'echo ****cloning the code****'])
           //git ([branch: 'day-1', url: 'https://github.com/d-synchronized/ci-cd-demo.git'])
-          git branch: "${params.BRANCH}", credentialsId: 'git-ssh', url: repoSSHUrl
+          //git branch: "${params.BRANCH}", credentialsId: 'git-ssh', url: repoSSHUrl
+          
+          
+          checkout([$class: 'GitSCM', 
+                    branches: [[name: '*/master']], 
+                    extensions: [], 
+                    userRemoteConfigs: [[credentialsId: 'git-ssh', url: "${params.BRANCH}"]]])
       }
       
       
@@ -30,33 +35,6 @@ node () { //node('worker_node')
           
      }
    
-     stage('Wait Until') {
-       echo '***************Wait Until Step******************'
-       timeout(time: 15, unit: 'SECONDS') {
-          waitUntil {
-             try{
-                 bat "curl https://www.keycdn.com"
-                 return true
-             } catch(err) {
-                 return false
-             }
-          }
-       }
-     }
-   
-     stage('Parallel Demo') {
-        def stepsToRun = [:]
-        for(int i = 1; i < 5 ; i++){
-            stepsToRun["Step ${i}"] = {
-               node {
-                  echo 'Step Started'
-                  sleep 5
-                  echo 'Step Completed'
-               }
-            }
-        }
-        //parallel stepsToRun
-     }
    
      stage('Conditional Branching') {
         def isPreRelease = params.releaseType;
