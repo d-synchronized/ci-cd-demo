@@ -33,7 +33,7 @@ node () { //node('worker_node')
              VNUM2="${VERSION_BITS[1]}"
              VNUM3="${VERSION_BITS[2]}"
              echo "initial value is ${VNUM3}"
-             VNUM3="${(VNUM3 + 1)}"
+             VNUM3= VNUM3?.isInteger() ? VNUM3.toInteger() + 1 : null
              echo "${VNUM3}"
 
              //create new tag
