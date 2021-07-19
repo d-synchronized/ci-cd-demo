@@ -30,7 +30,7 @@ node () { //node('worker_node')
           git branch: "${params.branchInput}", credentialsId: 'git-ssh', url: repoSSHUrl
       }
       stage('Interactive Input Stage'){
-          when(${params.branchInput} != "development"){
+          when("${params.branchInput}" != "development"){
              echo '*****Will wait for user input now*******'
           def inputParams = {}
           try{
