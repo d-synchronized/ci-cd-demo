@@ -29,6 +29,19 @@ node () { //node('worker_node')
           //git ([branch: 'day-1', url: 'https://github.com/d-synchronized/ci-cd-demo.git'])
           git branch: "${params.branchInput}", credentialsId: 'git-ssh', url: repoSSHUrl
       }
+      
+      
+      stage('Update Source') {
+          bat "git config user.name 'Dishant Anand'"
+          bat "git config user.email d.synchronized@gmail.com"
+          bat "git tag V-${params.buildReason} -a -m 'tag demo'"
+             bat "git push ${repoSSHUrl} --tags'"
+          swithCredentials([sshUserPrivateKey(credentialsId: 'git-ssh', keyFileVariable: 'git-ssh')]) {
+             bat "git tag V-${params.buildReason} -a -m 'tag demo'"
+             bat "git push ${repoSSHUrl} --tags'"
+          }
+          
+     }
    
      stage('Wait Until') {
        echo '***************Wait Until Step******************'
@@ -71,18 +84,6 @@ node () { //node('worker_node')
           bat([script: 'echo ****build command goes here****']) 
           bat([script: 'mvn clean install']) 
           milestone label: 'After Build', ordinal: 1
-     }
-     
-     stage('Update Source') {
-          bat "git config user.name 'Dishant Anand'"
-          bat "git config user.email d.synchronized@gmail.com"
-          bat "git tag V-${params.buildReason} -a -m 'tag demo'"
-             bat "git push ${repoSSHUrl} --tags'"
-          swithCredentials([sshUserPrivateKey(credentialsId: 'git-ssh', keyFileVariable: 'git-ssh')]) {
-             bat "git tag V-${params.buildReason} -a -m 'tag demo'"
-             bat "git push ${repoSSHUrl} --tags'"
-          }
-          
      }
      
      
