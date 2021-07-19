@@ -27,12 +27,7 @@ node () { //node('worker_node')
         //Steps
           bat([script: 'echo ****cloning the code****'])
           //git ([branch: 'day-1', url: 'https://github.com/d-synchronized/ci-cd-demo.git'])
-          
-          withCredentials([sshUserPrivateKey(credentialsId: 'git-ssh', keyFileVariable: 'git-ssh')]) {
-             bat([script: 'echo running git clone'])
-             //git branch: ${params.branchInput}, credentialsId: 'git-ssh', url: repoSSHUrl
-             git branch: "${params.branchInput}",  url: repoSSHUrl
-          }
+          git branch: ${params.branchInput}, credentialsId: 'git-ssh', url: repoSSHUrl
       }
       stage('Interactive Input Stage'){
           when(${params.branchInput} != "development"){
