@@ -77,8 +77,9 @@ node () { //node('worker_node')
           bat "git config user.name 'Dishant Anand'"
           bat "git config user.email d.synchronized@gmail.com"
           
-          sshagent(['github-credentials']) {
-              echo 'Some SSH operation'
+          sshagent(['git-ssh']) {
+             bat "git tag V-${params.buildReason} -a -m 'tag demo'"
+             bat "git push ${repoSSHUrl} --tags'"
           }
           
      }
