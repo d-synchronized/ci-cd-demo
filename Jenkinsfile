@@ -34,7 +34,7 @@ node () { //node('worker_node')
       stage('Update Source') {
           bat "git config user.name 'Dishant Anand'"
           bat "git config user.email d.synchronized@gmail.com"
-          withCredentials([sshUserPrivateKey(credentialsId: 'git-ssh', keyFileVariable: 'git-ssh')]) {
+          sshagent(['git-ssh']) {
              bat "git tag -a v${params.buildReason} -m \"pushing tag v${params.buildReason}\""
              bat "git push ${repoSSHUrl} --tags"
           }
