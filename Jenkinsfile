@@ -63,7 +63,7 @@ node () { //node('worker_node')
      echo 'Some error occurred during the build ' + err
      currentBuild.result = 'FALIURE'
    } finally {
-       deleteDir()
+       //deleteDir()
        //post build
        echo '***************************************************'
        echo '***************************************************'
