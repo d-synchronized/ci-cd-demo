@@ -1,33 +1,22 @@
 //Groovy Pipeline
 node () { //node('worker_node')
    properties([
-      pipelineTriggers([
-         upstream('demo-job, ') //Build after other projects are built
-         //,cron('*/15 * * * *')
-         ,githubPush() //GitHub hook trigger for GITScm polling
-         //,pollSCM('*/15 * * * *') // Very expensive operation
-      ]),
       parameters([
            booleanParam(defaultValue: true, description: 'Is Release?', name: 'releaseType'),
+           gitParameter(branchFilter: 'origin/(.*)', defaultValue: 'master', name: 'BRANCH', type: 'PT_BRANCH'),
            choice(choices: ['development', 'master' , 'day-1'], description: 'Choose the branch', name: 'branchInput'),
            string(description: 'Reason for the Build', name: 'buildReason', trim: true)
       ]),
-      //disableConcurrentBuilds()
+      disableConcurrentBuilds()
    ])
    
    def repoSSHUrl = 'git@github.com:d-synchronized/ci-cd-demo.git'
    try {
-      //Stages
-      stage('Pre Run'){
-          echo "Is This Pre-Release : ${params.releaseType}"
-          echo "Branch Name Selected is : ${params.branchInput}"
-          echo "Reason for the build is : ${params.buildReason}"
-      }
       stage('Source') { 
         //Steps
           bat([script: 'echo ****cloning the code****'])
           //git ([branch: 'day-1', url: 'https://github.com/d-synchronized/ci-cd-demo.git'])
-          git branch: "${params.branchInput}", credentialsId: 'git-ssh', url: repoSSHUrl
+          git branch: "${params.BRANCH}", credentialsId: 'git-ssh', url: repoSSHUrl
       }
       
       
