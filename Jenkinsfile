@@ -25,7 +25,7 @@ node () { //node('worker_node')
           withCredentials([usernamePassword(credentialsId: 'github-account', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
              VERSION='git describe --abbrev=0 --tags'
              echo "${VERSION}"
-             VERSION_BITS=$VERSION.tokenize(".")
+             VERSION_BITS=VERSION.tokenize(".")
              echo "${VERSION_BITS}"
 
              //get number parts and increase last one by 1
