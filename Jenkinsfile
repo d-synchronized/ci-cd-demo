@@ -15,12 +15,11 @@ node () { //node('worker_node')
           bat([script: 'echo ****cloning the code****'])
           //git ([branch: 'day-1', url: 'https://github.com/d-synchronized/ci-cd-demo.git'])
           //git branch: "${params.BRANCH}", credentialsId: 'git-ssh', url: repoSSHUrl
-          echo "${params.BRANCH}"
           
           checkout([$class: 'GitSCM', 
-                    branches: [[name: '*/master']], 
+                    branches: [[name: "*/${params.BRANCH}"]], 
                     extensions: [], 
-                    userRemoteConfigs: [[credentialsId: 'git-ssh', url: "${params.BRANCH}"]]])
+                    userRemoteConfigs: [[credentialsId: 'git-ssh', url: repoSSHUrl]]])
       }
       
       
