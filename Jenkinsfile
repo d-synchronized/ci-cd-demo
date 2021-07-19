@@ -28,7 +28,7 @@ node () { //node('worker_node')
         //Steps
           bat([script: 'echo ****cloning the code****'])
           //git ([branch: 'day-1', url: 'https://github.com/d-synchronized/ci-cd-demo.git'])
-          git branch: "${params.branchInput}", credentialsId: 'git-ssh', url: repoSSHUrl
+          git branch: "${params.BRANCH}", credentialsId: 'git-ssh', url: repoSSHUrl
       }
       
       
