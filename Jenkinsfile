@@ -11,7 +11,7 @@ node () { //node('worker_node')
    def repoUrl = 'https://github.com/d-synchronized/ci-cd-demo.git'
    try {
       stage('Checkout Source Code') { 
-          echo "***Checking out source code from repo url ${repoSSHUrl},branchName ${params.BRANCH}***"
+          echo "***Checking out source code from repo url ${repoUrl},branchName ${params.BRANCH}***"
           checkout([$class: 'GitSCM', 
                     branches: [[name: "*/${params.BRANCH}"]], 
                     extensions: [], 
