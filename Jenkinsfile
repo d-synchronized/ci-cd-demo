@@ -37,7 +37,7 @@ node () { //node('worker_node')
           bat "git tag V-${params.buildReason} -a -m 'tag demo'"
              bat "git push ${repoSSHUrl} --tags'"
           swithCredentials([sshUserPrivateKey(credentialsId: 'git-ssh', keyFileVariable: 'git-ssh')]) {
-             bat "git tag -a V-${params.buildReason} -m 'tag demo'"
+             bat "git tag -a V-${params.buildReason}"
              bat "git push ${repoSSHUrl} --tags'"
           }
           
