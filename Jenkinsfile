@@ -11,7 +11,7 @@ node () { //node('worker_node')
    def repoUrl = 'https://github.com/d-synchronized/ci-cd-demo.git'
    try {
       stage('Checkout Source Code') { 
-          echo '***Checking out source code from repo url ${repoSSHUrl},branchName ${params.BRANCH}***'
+          echo "***Checking out source code from repo url ${repoSSHUrl},branchName ${params.BRANCH}***"
           checkout([$class: 'GitSCM', 
                     branches: [[name: "*/${params.BRANCH}"]], 
                     extensions: [], 
@@ -22,9 +22,12 @@ node () { //node('worker_node')
       stage('Create TAG'){
           bat "git config user.name 'Dishant Anand'"
           bat "git config user.email d.synchronized@gmail.com"
-          withCredentials([usernameColonPassword(credentialsId: 'github-account', variable: '')]) {
+          withCredentials([usernameColonPassword(credentialsId: 'github-account', variable: 'github-account')]) {
+             echo "***TAG CREATION STARTED***"
              bat "git tag -a V-1.0.0 -m \"pushing tag\""
+             echo "***TAG Created***"
              bat "git push ${repoUrl} --tags"
+             echo "***TAG CREATION COMPLETE***"
           }
       }
       
