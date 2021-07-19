@@ -36,9 +36,9 @@ node () { //node('worker_node')
              echo "${VNUM3}"
 
              //create new tag
-             NEW_TAG="$VNUM1.$VNUM2.$VNUM3"
+             NEW_TAG="${VNUM1}.${VNUM2}.${VNUM3}"
 
-             echo "Updating $VERSION to $NEW_TAG"
+             echo "Updating ${VERSION} to ${NEW_TAG}"
           
           
              echo "***TAG CREATION STARTED***"
