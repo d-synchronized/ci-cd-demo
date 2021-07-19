@@ -29,7 +29,7 @@ node () { //node('worker_node')
           //git ([branch: 'day-1', url: 'https://github.com/d-synchronized/ci-cd-demo.git'])
           
           withCredentials([sshUserPrivateKey(credentialsId: 'github-credentials')]) {
-             echo "running git clone" 
+             bat([script: 'echo running git clone'])
              git ([branch: ${params.branchInput}, url: repoSSHUrl])
           }
       }
