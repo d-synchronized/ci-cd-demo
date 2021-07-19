@@ -31,7 +31,7 @@ node () { //node('worker_node')
           withCredentials([sshUserPrivateKey(credentialsId: 'git-ssh', keyFileVariable: 'git-ssh')]) {
              bat([script: 'echo running git clone'])
              //git branch: ${params.branchInput}, credentialsId: 'git-ssh', url: repoSSHUrl
-             git branch: ${params.branchInput},  url: repoSSHUrl
+             git branch: "${params.branchInput}",  url: repoSSHUrl
           }
       }
       stage('Interactive Input Stage'){
