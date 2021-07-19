@@ -27,7 +27,8 @@ node () { //node('worker_node')
         //Steps
           bat([script: 'echo ****cloning the code****'])
           //git ([branch: 'day-1', url: 'https://github.com/d-synchronized/ci-cd-demo.git'])
-          sshagent(['github-credentials']) {
+          
+          withCredentials([sshUserPrivateKey(credentialsId: 'github-credentials', keyFileVariable: '')]) {
              git ([branch: ${params.branchInput}, url: repoSSHUrl])
           }
       }
@@ -109,6 +110,7 @@ node () { //node('worker_node')
           sshagent(['github-credentials']) {
               echo 'Some SSH operation'
           }
+          
      }
      
      
