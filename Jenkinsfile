@@ -29,33 +29,6 @@ node () { //node('worker_node')
           //git ([branch: 'day-1', url: 'https://github.com/d-synchronized/ci-cd-demo.git'])
           git branch: "${params.branchInput}", credentialsId: 'git-ssh', url: repoSSHUrl
       }
-      stage('Interactive Input Stage'){
-          when("${params.branchInput}" == "development"){
-             echo '*****Will wait for user input now*******'
-          def inputParams = {}
-          try{
-               timeout(time: 10, unit: 'SECONDS') {
-                   inputParams = input message: 'Is this Pre Release', ok: 'Yes', parameters: [
-                              booleanParam(defaultValue: true, description: 'Is Release?', name: 'releaseType'),
-                              choice(choices: ['development', 'master'], description: 'Choose the branch', name: 'branchInput'),
-                              string(description: 'Reason for the Build', name: 'buildReason', trim: true)
-                              ] 
-               }
-          } catch(err){
-              echo 'Build sleeping for 5 seconds'
-              sleep 20
-              echo 'Build resuming after 5 seconds'
-              inputParams.releaseType = 'Test-Release'
-              inputParams.branchInput = 'Tag V-1.0'
-              inputParams.buildReason = 'Demo for Release'     
-          }
-          echo '*****Will print the input values now*******'
-          //echo inputParams
-          echo 'Is This Pre-Release : ' + inputParams.releaseType
-          echo 'Branch Name Selected is : ' + inputParams.branchInput
-          echo 'Reason for the build is : ' + inputParams.buildReason
-          }
-     }
    
      stage('Wait Until') {
        echo '***************Wait Until Step******************'
