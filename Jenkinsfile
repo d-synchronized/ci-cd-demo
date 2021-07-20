@@ -46,21 +46,31 @@ node () { //node('worker_node')
              // bat "git config user.name 'Dishant Anand'"
              //bat "git config user.email d.synchronized@gmail.com"
              
-             VERSION = sh(returnStdout:  true, script: 'git describe --abbrev=0 --tags').trim()
-             VERSION_BITS=VERSION.tokenize(".")
-             VNUM1="${VERSION_BITS[0]}"
-             VNUM2="${VERSION_BITS[1]}"
-             VNUM3="${VERSION_BITS[2]}"
-             VNUM3= VNUM3?.isInteger() ? VNUM3.toInteger() + 1 : null
-             NEW_TAG="${VNUM1}.${VNUM2}.${VNUM3}"
+             echo "***Creating tag for the RELEASE***"
              
+             LATEST_TAG_VERSION = sh(returnStdout:  true, script: 'git describe --abbrev=0 --tags').trim()
+             echo "Latest tag version is ${LATEST_TAG_VERSION}"
+             TAG_VERSION_BITS=VERSION.tokenize("-")
+             PORTION_AFTER_HYPHEN="${TAG_VERSION_BITS[1]}"
+             PORTION_AFTER_HYPHEN_BITS=PORTION_AFTER_HYPHEN.tokenize(".")
+             TAG_VERSION_MAJOR_BIT="${PORTION_AFTER_HYPHEN_BITS[0]}"
+             TAG_VERSION_MAJOR_BIT = TAG_VERSION_MAJOR_BIT?.isInteger() ? TAG_VERSION_MAJOR_BIT.toInteger() : null
+             echo "TAG_VERSION_MAJOR_BIT is ${TAG_VERSION_MAJOR_BIT}"
+             
+             projectVersion = readMavenPom().getVersion()
+             VERSION_BITS=projectVersion.tokenize(".")
+             VNUM1="${VERSION_BITS[0]}"
+             VERSION_MAJOR_BIT = VNUM1?.isInteger() ? VNUM1.toInteger() : null
+             echo "VERSION_MAJOR_BIT is ${TAG_VERSION_MAJOR_BIT}"
+             
+             NEW_TAG_VERSION = TAG_VERSION_MAJOR_BIT > VERSION_MAJOR_BIT ? PORTION_AFTER_HYPHEN : projectVersion
+             NEW_TAG = "RELEASE-${NEW_TAG_VERSION}"
+             echo "NEW_TAG is ${NEW_TAG}"
              withCredentials([usernamePassword(credentialsId: 'github-account', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-                
-                bat "git tag -a ${NEW_TAG} -m \"pushing tag ${NEW_TAG}\""
-                echo "***Pushing the TAG ${NEW_TAG} to the repository***"
+                bat "git tag -a ${NEW_TAG} -m \"pushing TAG VERSION ${NEW_TAG}\""
                 bat "git push https://${env.GIT_USERNAME}:${env.GIT_PASSWORD}@github.com/d-synchronized/ci-cd-demo.git --tags"
-                echo "***TAG CREATION COMPLETE***"
              }//with credentials ends here
+             echo "***Successfully created TAG ${NEW_TAG} in the repository for the current release***"
           } else {
               echo "***TAG creation skipped for the environment ${params.ENVIRONMENT}***"
           }
