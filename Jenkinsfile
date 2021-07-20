@@ -22,7 +22,7 @@ node () { //node('worker_node')
       
       stage('Increment Artifact Version') {
           projectVersion = readMavenPom().getVersion()
-          echo "Project Version is ${projectVersion}"
+          echo "Project Version is ${projectVersion} , ${params.RELEASE}"
           VERSION_BITS=projectVersion.tokenize(".")
           VNUM1="${VERSION_BITS[0]}"
           VNUM2="${VERSION_BITS[1]}"
