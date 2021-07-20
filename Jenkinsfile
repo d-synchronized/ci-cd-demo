@@ -29,16 +29,22 @@ node () { //node('worker_node')
           VNUM3="${VERSION_BITS[2]}"
           NEW_VERSION = ""
           if("${params.RELEASE}" ==  'true'){
-             echo "About to release"
-                VNUM1= VNUM1?.isInteger() ? VNUM1.toInteger() + 1 : null
-                NEW_VERSION="${VNUM1}.${VNUM2}.${VNUM3}"
+             echo "About to release ${projectVersion}"
+             bat "mvn versions:set -DremoveSnapshot -DgenerateBackupPoms=false"
+             
+             projectVersion = readMavenPom().getVersion()
+             echo "New Version ${projectVersion}"
+             VNUM1= VNUM1?.isInteger() ? VNUM1.toInteger() + 1 : null
+             NEW_VERSION="${VNUM1}.${VNUM2}.${VNUM3}"
           } else {
-                VNUM3_BITS = VNUM3.tokenize("-")
-                VNUM3_INCR = VNUM3_BITS[0]?.isInteger() ? VNUM3_BITS[0].toInteger() + 1 : VNUM3_BITS[0]
-                NEW_VERSION="${VNUM1}.${VNUM2}.${VNUM3_INCR}-${VNUM3_BITS[1]}"
+             
+             VNUM3_BITS = VNUM3.tokenize("-")
+             VNUM3_INCR = VNUM3_BITS[0]?.isInteger() ? VNUM3_BITS[0].toInteger() + 1 : VNUM3_BITS[0]
+             NEW_VERSION="${VNUM1}.${VNUM2}.${VNUM3_INCR}-${VNUM3_BITS[1]}"
           } 
-          echo "${NEW_VERSION}"
-          //bat "mvn -U versions:set -DnewVersion=${NEW_VERSION}"
+          
+          echo "Changed from ${projectVersion} to ${NEW_VERSION}"
+          bat "mvn -U versions:set -DnewVersion=${NEW_VERSION}"
           
           //bat "git add pom.xml"
           //bat "git commit -m \"Incrementing pom version from ${projectVersion} to ${NEW_VERSION}\""
