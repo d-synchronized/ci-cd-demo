@@ -70,7 +70,7 @@ node () { //node('worker_node')
              VERSION_MAJOR_BIT = VNUM1?.isInteger() ? VNUM1.toInteger() : null
              echo "VERSION_MAJOR_BIT is ${TAG_VERSION_MAJOR_BIT}"
              
-             NEW_TAG_VERSION = TAG_VERSION_MAJOR_BIT > VERSION_MAJOR_BIT ? PORTION_AFTER_HYPHEN : projectVersion
+             NEW_TAG_VERSION = TAG_VERSION_MAJOR_BIT >= VERSION_MAJOR_BIT ? (VERSION_MAJOR_BIT + 1) + '.0.0' : projectVersion
              NEW_TAG = "RELEASE-${NEW_TAG_VERSION}"
              
              tagVersionCreated = NEW_TAG
