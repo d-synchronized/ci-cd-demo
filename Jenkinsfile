@@ -159,14 +159,14 @@ node () { //node('worker_node')
        echo '***************************************************'
    }
    
-   deleteTag(){
+   def deleteTag(){
       echo "deleting the TAG ${tagVersionCreated}"
       withCredentials([usernamePassword(credentialsId: 'github-account', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
           bat "git push --delete https://${env.GIT_USERNAME}:${env.GIT_PASSWORD}@github.com/d-synchronized/ci-cd-demo.git ${tagVersionCreated}"
       }
    }
    
-   revertParentPOM(){
+   def revertParentPOM(){
       echo "reverting pom version to ${previousPomVersion}"
       bat "mvn -U versions:set -DnewVersion=${previousPomVersion}"
       withCredentials([usernamePassword(credentialsId: 'github-account', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
