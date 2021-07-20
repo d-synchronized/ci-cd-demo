@@ -42,7 +42,7 @@ node () { //node('worker_node')
       }
       
       stage('Create TAG'){
-          if("${params.RELEASE}" == 'true'){
+          if("${params.RELEASE}" ==  'true'){
              // bat "git config user.name 'Dishant Anand'"
              //bat "git config user.email d.synchronized@gmail.com"
              
