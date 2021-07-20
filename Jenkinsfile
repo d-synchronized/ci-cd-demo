@@ -2,14 +2,16 @@
 node () { //node('worker_node')
    properties([
       parameters([
-           gitParameter(branchFilter: 'origin/(.*)', defaultValue: 'master', name: 'BRANCH', type: 'PT_BRANCH'),
+           gitParameter(branchFilter: 'origin/(.*)', defaultValue: 'development', name: 'BRANCH', type: 'PT_BRANCH'),
            choice(choices: ['DEV', 'QA' , 'PROD'], description: 'Choose the branch', name: 'ENVIRONMENT'),
+           booleanParam(defaultValue: false,  name: 'RELEASE'),
       ]),
       disableConcurrentBuilds()
    ])
    
    def repoUrl = 'https://github.com/d-synchronized/ci-cd-demo.git'
    def createTag = false;
+   def projectVersion = readMavenPom().getVersion()
    try {
       stage('Checkout Source Code') { 
           echo "***Checking out source code from repo url ${repoUrl},branchName ${params.BRANCH}***"
@@ -20,10 +22,33 @@ node () { //node('worker_node')
       }
       
       
-      stage('Create TAG'){
-          createTag = "${params.ENVIRONMENT}" == 'PROD' ? true : false;
+      stage('Increment Artifact Version') {
+          echo "Project Version is ${projectVersion}"
+          VERSION_BITS=projectVersion.tokenize(".")
+          VNUM1="${VERSION_BITS[0]}"
+          VNUM2="${VERSION_BITS[1]}"
+          VNUM3="${VERSION_BITS[2]}"
+          NEW_VERSION = ""
+          if("${params.RELEASE}" ==  true){
+             echo "About to release"
+                VNUM1= VNUM1?.isInteger() ? VNUM1.toInteger() + 1 : null
+                NEW_VERSION="${VNUM1}.${VNUM2}.${VNUM3}"
+          } else {
+                VNUM3_BITS = VNUM3.tokenize("-")
+                VNUM3_INCR = VNUM3_BITS[0]?.isInteger() ? VNUM3_BITS[0].toInteger() + 1 : VNUM3_BITS[0]
+                NEW_VERSION="${VNUM1}.${VNUM2}.${VNUM3_INCR}-${VNUM3_BITS[1]}"
+          } 
+          echo "${NEW_VERSION}"
+          //bat "mvn -U versions:set -DnewVersion=${NEW_VERSION}"
           
-          if(createTag){
+          //bat "git add pom.xml"
+          //bat "git commit -m \"Incrementing pom version from ${projectVersion} to ${NEW_VERSION}\""
+          //bat "git push origin ${BRANCH}"
+          //bat "git add pom.xml"
+      }
+      
+      stage('Create TAG'){
+          if("${params.RELEASE}" == false){
              //Drop SNAPSHOT
              bat "mvn versions:set -DremoveSnapshot -DgenerateBackupPoms=false"
           
