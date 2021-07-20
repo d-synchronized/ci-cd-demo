@@ -34,7 +34,7 @@ node () { //node('worker_node')
              withCredentials([usernamePassword(credentialsId: 'github-account', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                 bat "git add pom.xml"
                 bat "git commit -m \"Incrementing pom version from ${projectVersion} to ${NEW_VERSION}\""
-                bat "git push origin ${BRANCH}"
+                bat "git push origin HEAD:${BRANCH}"
              }
           } else {
              echo "***DROP SNAPSHOT skipped for releaseType? ${params.RELEASE}***"
