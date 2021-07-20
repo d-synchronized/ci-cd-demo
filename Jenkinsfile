@@ -50,7 +50,7 @@ node () { //node('worker_node')
              
              LATEST_TAG_VERSION = sh(returnStdout:  true, script: 'git describe --abbrev=0 --tags').trim()
              echo "Latest tag version is ${LATEST_TAG_VERSION}"
-             TAG_VERSION_BITS=VERSION.tokenize("-")
+             TAG_VERSION_BITS=LATEST_TAG_VERSION.tokenize("-")
              PORTION_AFTER_HYPHEN="${TAG_VERSION_BITS[1]}"
              PORTION_AFTER_HYPHEN_BITS=PORTION_AFTER_HYPHEN.tokenize(".")
              TAG_VERSION_MAJOR_BIT="${PORTION_AFTER_HYPHEN_BITS[0]}"
