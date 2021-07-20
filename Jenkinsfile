@@ -28,13 +28,17 @@ node () { //node('worker_node')
              
              NEW_VERSION = readMavenPom().getVersion()
              
-             echo "Changed from ${projectVersion} to ${NEW_VERSION}"
-             bat "mvn -U versions:set -DnewVersion=${NEW_VERSION}"
+             if(NEW_VERSION != projectVersion){
+                echo "Changed from ${projectVersion} to ${NEW_VERSION}"
+                bat "mvn -U versions:set -DnewVersion=${NEW_VERSION}"
           
-             withCredentials([usernamePassword(credentialsId: 'github-account', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-                bat "git add pom.xml"
-                bat "git commit -m \"Incrementing pom version from ${projectVersion} to ${NEW_VERSION}\""
-                bat "git push https://${env.GIT_USERNAME}:${env.GIT_PASSWORD}@github.com/d-synchronized/ci-cd-demo.git HEAD:${BRANCH}"
+                withCredentials([usernamePassword(credentialsId: 'github-account', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                  bat "git add pom.xml"
+                  bat "git commit -m \"Incrementing pom version from ${projectVersion} to ${NEW_VERSION}\""
+                  bat "git push https://${env.GIT_USERNAME}:${env.GIT_PASSWORD}@github.com/d-synchronized/ci-cd-demo.git HEAD:${BRANCH}"
+                }
+             }else {
+                echo "New Version matches the POM Version"
              }
           } else {
              echo "***DROP SNAPSHOT skipped for releaseType? ${params.RELEASE}***"
