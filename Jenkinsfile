@@ -28,7 +28,7 @@ node () { //node('worker_node')
           VNUM2="${VERSION_BITS[1]}"
           VNUM3="${VERSION_BITS[2]}"
           NEW_VERSION = ""
-          if("${params.RELEASE}" ==  true){
+          if("${params.RELEASE}" ==  'true'){
              echo "About to release"
                 VNUM1= VNUM1?.isInteger() ? VNUM1.toInteger() + 1 : null
                 NEW_VERSION="${VNUM1}.${VNUM2}.${VNUM3}"
