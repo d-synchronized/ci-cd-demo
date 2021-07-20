@@ -10,6 +10,8 @@ node () { //node('worker_node')
    ])
    
    def repoUrl = 'https://github.com/d-synchronized/ci-cd-demo.git'
+   def previousPomVersion = ''
+   def tagVersionCreated = ''
    try {
       stage('Checkout Source Code') { 
           echo "***Checking out source code from repo url ${repoUrl},branchName ${params.BRANCH}***"
@@ -22,6 +24,7 @@ node () { //node('worker_node')
       
       stage('Drop SNAPSHOT') {
           projectVersion = readMavenPom().getVersion()
+          previousPomVersion = projectVersion
           if("${params.RELEASE}" ==  'true'){
              echo "About to release ${projectVersion}"
              bat "mvn versions:set -DremoveSnapshot -DgenerateBackupPoms=false"
@@ -69,6 +72,9 @@ node () { //node('worker_node')
              
              NEW_TAG_VERSION = TAG_VERSION_MAJOR_BIT > VERSION_MAJOR_BIT ? PORTION_AFTER_HYPHEN : projectVersion
              NEW_TAG = "RELEASE-${NEW_TAG_VERSION}"
+             
+             tagVersionCreated = NEW_TAG
+             
              echo "NEW_TAG is ${NEW_TAG}"
              withCredentials([usernamePassword(credentialsId: 'github-account', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                 bat "git tag -a ${NEW_TAG} -m \"pushing TAG VERSION ${NEW_TAG}\""
@@ -129,28 +135,43 @@ node () { //node('worker_node')
      
      currentBuild.result = 'SUCCESS'
    } catch(Exception err) {
-     //FAILURE
-     echo 'Some error occurred during the build ' + err
-     currentBuild.result = 'FALIURE'
+      echo "Error occurred while running the job '${env.JOB_NAME}'"
+      currentBuild.result = 'FALIURE'
+      revertParentPOM()
+      if("${params.RELEASE}" == 'true'){
+         deleteTag()
+      }
    } finally {
        //deleteDir()
-       //post build
        echo '***************************************************'
        echo '***************************************************'
        echo '****POST******BUILD*****ACTION*********START*******'
-       
        //mail to: 'd.synchronized@gmail.com', cc: 'vision4cloud@gmail.com,d.xcption13@gmail.com', bcc: 'slayer4cloud@gmail.com', 
        //     body: "Status for ${env.JOB_NAME} (${env.JOB_URL}) is ${currentBuild.result}", 
        //     subject: "Status of pipeline : ${currentBuild.fullDisplayName}"
-            
        emailext attachLog: true, 
                 body: 'Status for ${env.JOB_NAME} (${env.JOB_URL}) is ${currentBuild.result}', 
                 subject: 'Status of pipeline : ${currentBuild.fullDisplayName',
                 to: 'd.synchronized@gmail.com,d.xcption13@gmail.com'
-       
        echo '****POST******BUILD*****ACTION*********END*********'
        echo '***************************************************'
        echo '***************************************************'
-       
+   }
+   
+   deleteTag(){
+      echo "deleting the TAG ${tagVersionCreated}"
+      withCredentials([usernamePassword(credentialsId: 'github-account', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+          bat "git push --delete https://${env.GIT_USERNAME}:${env.GIT_PASSWORD}@github.com/d-synchronized/ci-cd-demo.git ${tagVersionCreated}"
+      }
+   }
+   
+   revertParentPOM(){
+      echo "reverting pom version to ${previousPomVersion}"
+      bat "mvn -U versions:set -DnewVersion=${previousPomVersion}"
+      withCredentials([usernamePassword(credentialsId: 'github-account', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+          bat "git add pom.xml"
+          bat "git commit -m \"Incrementing pom version/appending snapshot from ${projectVersion} to ${NEW_VERSION}\""
+          bat "git push https://${env.GIT_USERNAME}:${env.GIT_PASSWORD}@github.com/d-synchronized/ci-cd-demo.git HEAD:${BRANCH}"
+      }
    }
 }
