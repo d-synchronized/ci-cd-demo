@@ -34,7 +34,6 @@ node () { //node('worker_node')
              withCredentials([usernamePassword(credentialsId: 'github-account', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                 bat "git add pom.xml"
                 bat "git commit -m \"Incrementing pom version from ${projectVersion} to ${NEW_VERSION}\""
-                //bat "git push origin HEAD:${BRANCH}"
                 bat "git push https://${env.GIT_USERNAME}:${env.GIT_PASSWORD}@github.com/d-synchronized/ci-cd-demo.git HEAD:${BRANCH}"
              }
           } else {
@@ -92,12 +91,13 @@ node () { //node('worker_node')
           } 
           
           echo "Changed from ${projectVersion} to ${NEW_VERSION}"
-          //bat "mvn -U versions:set -DnewVersion=${NEW_VERSION}"
+          bat "mvn -U versions:set -DnewVersion=${NEW_VERSION}"
           
-          //bat "git add pom.xml"
-          //bat "git commit -m \"Incrementing pom version from ${projectVersion} to ${NEW_VERSION}\""
-          //bat "git push origin ${BRANCH}"
-          //bat "git add pom.xml"
+          withCredentials([usernamePassword(credentialsId: 'github-account', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+              bat "git add pom.xml"
+              bat "git commit -m \"Incrementing pom version/appending snapshot from ${projectVersion} to ${NEW_VERSION}\""
+              bat "git push https://${env.GIT_USERNAME}:${env.GIT_PASSWORD}@github.com/d-synchronized/ci-cd-demo.git HEAD:${BRANCH}"
+          }
        }
      
      
