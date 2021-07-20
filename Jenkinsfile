@@ -20,36 +20,24 @@ node () { //node('worker_node')
       }
       
       
-      stage('Increment Artifact Version') {
+      stage('Drop SNAPSHOT') {
           projectVersion = readMavenPom().getVersion()
-          echo "Project Version is ${projectVersion} , ${params.RELEASE}"
-          VERSION_BITS=projectVersion.tokenize(".")
-          VNUM1="${VERSION_BITS[0]}"
-          VNUM2="${VERSION_BITS[1]}"
-          VNUM3="${VERSION_BITS[2]}"
-          NEW_VERSION = ""
           if("${params.RELEASE}" ==  'true'){
              echo "About to release ${projectVersion}"
              bat "mvn versions:set -DremoveSnapshot -DgenerateBackupPoms=false"
              
              projectVersion = readMavenPom().getVersion()
-             echo "New Version ${projectVersion}"
-             VNUM1= VNUM1?.isInteger() ? VNUM1.toInteger() + 1 : null
-             NEW_VERSION="${VNUM1}.${VNUM2}.${VNUM3}"
-          } else {
              
-             VNUM3_BITS = VNUM3.tokenize("-")
-             VNUM3_INCR = VNUM3_BITS[0]?.isInteger() ? VNUM3_BITS[0].toInteger() + 1 : VNUM3_BITS[0]
-             NEW_VERSION="${VNUM1}.${VNUM2}.${VNUM3_INCR}-${VNUM3_BITS[1]}"
+             echo "Changed from ${projectVersion} to ${NEW_VERSION}"
+             bat "mvn -U versions:set -DnewVersion=${NEW_VERSION}"
+          
+             //bat "git add pom.xml"
+             //bat "git commit -m \"Incrementing pom version from ${projectVersion} to ${NEW_VERSION}\""
+             //bat "git push origin ${BRANCH}"
+             //bat "git add pom.xml"
+          } else {
+             // Do Nothing
           } 
-          
-          echo "Changed from ${projectVersion} to ${NEW_VERSION}"
-          bat "mvn -U versions:set -DnewVersion=${NEW_VERSION}"
-          
-          //bat "git add pom.xml"
-          //bat "git commit -m \"Incrementing pom version from ${projectVersion} to ${NEW_VERSION}\""
-          //bat "git push origin ${BRANCH}"
-          //bat "git add pom.xml"
       }
       
       stage('Create TAG'){
@@ -86,6 +74,31 @@ node () { //node('worker_node')
           milestone label: 'After Build', ordinal: 1
      }
      
+      stage('Increment Version'){
+          projectVersion = readMavenPom().getVersion()
+          VERSION_BITS=projectVersion.tokenize(".")
+          VNUM1="${VERSION_BITS[0]}"
+          VNUM2="${VERSION_BITS[1]}"
+          VNUM3="${VERSION_BITS[2]}"
+          NEW_VERSION = ""
+          if("${params.RELEASE}" ==  'true'){
+             VNUM1= VNUM1?.isInteger() ? VNUM1.toInteger() + 1 : null
+             NEW_VERSION="${VNUM1}.0.0-SNAPSHOT"
+          } else {
+             VNUM3_BITS = VNUM3.tokenize("-")
+             VNUM3_INCR = VNUM3_BITS[0]?.isInteger() ? VNUM3_BITS[0].toInteger() + 1 : VNUM3_BITS[0]
+             NEW_VERSION="${VNUM1}.${VNUM2}.${VNUM3_INCR}-SNAPSHOT"
+          } 
+          
+          echo "Changed from ${projectVersion} to ${NEW_VERSION}"
+          //bat "mvn -U versions:set -DnewVersion=${NEW_VERSION}"
+          
+          //bat "git add pom.xml"
+          //bat "git commit -m \"Incrementing pom version from ${projectVersion} to ${NEW_VERSION}\""
+          //bat "git push origin ${BRANCH}"
+          //bat "git add pom.xml"
+       }
+     
      
      currentBuild.result = 'SUCCESS'
    } catch(Exception err) {
@@ -111,5 +124,6 @@ node () { //node('worker_node')
        echo '****POST******BUILD*****ACTION*********END*********'
        echo '***************************************************'
        echo '***************************************************'
+       
    }
 }
