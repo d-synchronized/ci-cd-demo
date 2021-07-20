@@ -26,7 +26,7 @@ node () { //node('worker_node')
              echo "About to release ${projectVersion}"
              bat "mvn versions:set -DremoveSnapshot -DgenerateBackupPoms=false"
              
-             projectVersion = readMavenPom().getVersion()
+             NEW_VERSION = readMavenPom().getVersion()
              
              echo "Changed from ${projectVersion} to ${NEW_VERSION}"
              bat "mvn -U versions:set -DnewVersion=${NEW_VERSION}"
