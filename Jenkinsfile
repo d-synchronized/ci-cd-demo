@@ -15,6 +15,9 @@ node () { //node('worker_node')
    try {
       stage('Checkout Source Code') { 
           echo "***Checking out source code from repo url ${repoUrl},branchName ${params.BRANCH}***"
+          bat "git config user.name 'Dishant Anand'"
+          bat "git config user.email d.synchronized@gmail.com"
+          
           checkout([$class: 'GitSCM', 
                     branches: [[name: "*/${params.BRANCH}"]], 
                     extensions: [], 
@@ -50,9 +53,6 @@ node () { //node('worker_node')
       
       stage('Create TAG'){
           if("${params.RELEASE}" ==  'true'){
-             // bat "git config user.name 'Dishant Anand'"
-             //bat "git config user.email d.synchronized@gmail.com"
-             
              echo "***Creating tag for the RELEASE***"
              
              LATEST_TAG_VERSION = sh(returnStdout:  true, script: 'git describe --abbrev=0 --tags').trim()
