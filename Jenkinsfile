@@ -10,8 +10,6 @@ node () { //node('worker_node')
    ])
    
    def repoUrl = 'https://github.com/d-synchronized/ci-cd-demo.git'
-   def createTag = false;
-   def projectVersion = readMavenPom().getVersion()
    try {
       stage('Checkout Source Code') { 
           echo "***Checking out source code from repo url ${repoUrl},branchName ${params.BRANCH}***"
@@ -24,6 +22,8 @@ node () { //node('worker_node')
       
       stage('Increment Artifact Version') {
           echo "Project Version is ${projectVersion}"
+          projectVersion = readMavenPom().getVersion()
+          
           VERSION_BITS=projectVersion.tokenize(".")
           VNUM1="${VERSION_BITS[0]}"
           VNUM2="${VERSION_BITS[1]}"
