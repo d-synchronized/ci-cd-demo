@@ -5,6 +5,7 @@ node () { //node('worker_node')
            gitParameter(branchFilter: 'origin/(.*)', defaultValue: 'development', name: 'BRANCH', type: 'PT_BRANCH'),
            choice(choices: ['DEV', 'QA' , 'BOTH'], name: 'SERVER_DEPLOYMENT_OPTION'),
            booleanParam(defaultValue: false,  name: 'RELEASE'),
+           booleanParam(defaultValue: false,  name: 'WITH_ERROR')
       ]),
       disableConcurrentBuilds()
    ])
@@ -134,7 +135,9 @@ node () { //node('worker_node')
        
      
        currentBuild.result = 'SUCCESS'
-       error("Build failed because of this and that..")
+       if("${WITH_ERROR}" == 'true'){
+          error("Build failed because of this and that..")
+       }
    } catch(Exception err) {
       echo "Error occurred while running the job '${env.JOB_NAME}'"
       currentBuild.result = 'FALIURE'
