@@ -104,6 +104,7 @@ node () { //node('worker_node')
          if(DEPLOY_TO_QA){
             echo "Deploying to QA servers"
          }
+         error("Build failed because of this and that..")
      }
      
      stage('Increment Development Version'){
