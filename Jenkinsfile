@@ -176,7 +176,7 @@ def revertParentPOM(String previousPomVersion) {
       bat "mvn -U versions:set -DnewVersion=${previousPomVersion}"
       withCredentials([usernamePassword(credentialsId: 'github-account', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
           bat "git add pom.xml"
-          bat "git commit -m \"Incrementing pom version/appending snapshot from ${projectVersion} to ${NEW_VERSION}\""
+          bat "git commit -m \"Reverting pom version from ${NEW_VERSION} to ${projectVersion} \""
           bat "git push https://${env.GIT_USERNAME}:${env.GIT_PASSWORD}@github.com/d-synchronized/ci-cd-demo.git HEAD:${BRANCH}"
       }
 }
