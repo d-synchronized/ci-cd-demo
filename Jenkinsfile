@@ -161,7 +161,6 @@ node () { //node('worker_node')
    
 }
 
-@NonCPS
 def deleteTag(String tagVersionCreated) { 
       echo "deleting the TAG ${tagVersionCreated}"
       withCredentials([usernamePassword(credentialsId: 'github-account', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
@@ -169,7 +168,6 @@ def deleteTag(String tagVersionCreated) {
       }
 }
    
-@NonCPS
 def revertParentPOM(String previousPomVersion) {
       echo "reverting pom version to ${previousPomVersion}"
       bat "mvn -U versions:set -DnewVersion=${previousPomVersion}"
