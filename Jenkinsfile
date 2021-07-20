@@ -104,7 +104,6 @@ node () { //node('worker_node')
          if(DEPLOY_TO_QA){
             echo "Deploying to QA servers"
          }
-         error("Build failed because of this and that..")
      }
      
      stage('Increment Development Version'){
@@ -132,9 +131,10 @@ node () { //node('worker_node')
               bat "git push https://${env.GIT_USERNAME}:${env.GIT_PASSWORD}@github.com/d-synchronized/ci-cd-demo.git HEAD:${BRANCH}"
           }
        }
+       
      
-     
-     currentBuild.result = 'SUCCESS'
+       currentBuild.result = 'SUCCESS'
+       error("Build failed because of this and that..")
    } catch(Exception err) {
       echo "Error occurred while running the job '${env.JOB_NAME}'"
       currentBuild.result = 'FALIURE'
