@@ -31,31 +31,31 @@ node () { //node('worker_node')
              echo "Changed from ${projectVersion} to ${NEW_VERSION}"
              bat "mvn -U versions:set -DnewVersion=${NEW_VERSION}"
           
-             //bat "git add pom.xml"
-             //bat "git commit -m \"Incrementing pom version from ${projectVersion} to ${NEW_VERSION}\""
-             //bat "git push origin ${BRANCH}"
-             //bat "git add pom.xml"
+             withCredentials([usernamePassword(credentialsId: 'github-account', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                bat "git add pom.xml"
+                bat "git commit -m \"Incrementing pom version from ${projectVersion} to ${NEW_VERSION}\""
+                bat "git push origin ${BRANCH}"
+             }
           } else {
-             // Do Nothing
+             echo "***DROP SNAPSHOT skipped for releaseType? ${params.RELEASE}***"
           } 
       }
       
       stage('Create TAG'){
           if("${params.RELEASE}" == false){
-             //Drop SNAPSHOT
-             bat "mvn versions:set -DremoveSnapshot -DgenerateBackupPoms=false"
-          
-             bat "git config user.name 'Dishant Anand'"
-             bat "git config user.email d.synchronized@gmail.com"
+             // bat "git config user.name 'Dishant Anand'"
+             //bat "git config user.email d.synchronized@gmail.com"
+             
+             VERSION = sh(returnStdout:  true, script: 'git describe --abbrev=0 --tags').trim()
+             VERSION_BITS=VERSION.tokenize(".")
+             VNUM1="${VERSION_BITS[0]}"
+             VNUM2="${VERSION_BITS[1]}"
+             VNUM3="${VERSION_BITS[2]}"
+             VNUM3= VNUM3?.isInteger() ? VNUM3.toInteger() + 1 : null
+             NEW_TAG="${VNUM1}.${VNUM2}.${VNUM3}"
+             
              withCredentials([usernamePassword(credentialsId: 'github-account', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-                VERSION = sh(returnStdout:  true, script: 'git describe --abbrev=0 --tags').trim()
-                VERSION_BITS=VERSION.tokenize(".")
-                VNUM1="${VERSION_BITS[0]}"
-                VNUM2="${VERSION_BITS[1]}"
-                VNUM3="${VERSION_BITS[2]}"
-                VNUM3= VNUM3?.isInteger() ? VNUM3.toInteger() + 1 : null
-                NEW_TAG="${VNUM1}.${VNUM2}.${VNUM3}"
-                echo "***Upgrading TAG from ${VERSION} to ${NEW_TAG}***"
+                
                 bat "git tag -a ${NEW_TAG} -m \"pushing tag ${NEW_TAG}\""
                 echo "***Pushing the TAG ${NEW_TAG} to the repository***"
                 bat "git push https://${env.GIT_USERNAME}:${env.GIT_PASSWORD}@github.com/d-synchronized/ci-cd-demo.git --tags"
