@@ -3,7 +3,7 @@ node () { //node('worker_node')
    properties([
       parameters([
            gitParameter(branchFilter: 'origin/(.*)', defaultValue: 'development', name: 'BRANCH', type: 'PT_BRANCH'),
-           choice(choices: ['Deploy to Dev', 'Deploy to QA' , 'Both'], name: 'SERVER_DEPLOYMENT_OPTION'),
+           choice(choices: ['DEV', 'QA' , 'BOTH'], name: 'SERVER_DEPLOYMENT_OPTION'),
            booleanParam(defaultValue: false,  name: 'RELEASE'),
       ]),
       disableConcurrentBuilds()
@@ -82,12 +82,25 @@ node () { //node('worker_node')
       }
       
    
-     stage('Perform Build and Prepare Artifact') {
+     stage('Build & Deploy Artifact') {
           bat([script: 'mvn clean install']) 
           milestone label: 'After Build', ordinal: 1
+          
+          echo "Deploying to nexus or JFROG"
      }
      
-      stage('Increment Development Version'){
+     stage('Deploy Artifact') {
+         DEPLOY_TO_QA = "${params.SERVER_DEPLOYMENT_OPTION}" == 'BOTH' || "${params.SERVER_DEPLOYMENT_OPTION}" == 'QA' ? true : false
+         DEPLOY_TO_DEV = "${params.SERVER_DEPLOYMENT_OPTION}" == 'BOTH' || "${params.SERVER_DEPLOYMENT_OPTION}" == 'DEV' ? true : false
+         if(DEPLOY_TO_DEV){
+            echo "Deploying to Dev servers"
+         }
+         if(DEPLOY_TO_QA){
+            echo "Deploying to QA servers"
+         }
+     }
+     
+     stage('Increment Development Version'){
           projectVersion = readMavenPom().getVersion()
           VERSION_BITS=projectVersion.tokenize(".")
           VNUM1="${VERSION_BITS[0]}"
