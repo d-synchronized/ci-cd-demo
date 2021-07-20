@@ -3,7 +3,7 @@ node () { //node('worker_node')
    properties([
       parameters([
            gitParameter(branchFilter: 'origin/(.*)', defaultValue: 'development', name: 'BRANCH', type: 'PT_BRANCH'),
-           choice(choices: ['DEV', 'QA' , 'PROD'], description: 'Choose the branch', name: 'ENVIRONMENT'),
+           choice(choices: ['Deploy to Dev', 'Deploy to QA' , 'Both'], name: 'SERVER_DEPLOYMENT_OPTION'),
            booleanParam(defaultValue: false,  name: 'RELEASE'),
       ]),
       disableConcurrentBuilds()
@@ -82,13 +82,12 @@ node () { //node('worker_node')
       }
       
    
-     stage('Build') {
-          bat([script: 'echo ****build command goes here****']) 
+     stage('Perform Build and Prepare Artifact') {
           bat([script: 'mvn clean install']) 
           milestone label: 'After Build', ordinal: 1
      }
      
-      stage('Increment Version'){
+      stage('Increment Development Version'){
           projectVersion = readMavenPom().getVersion()
           VERSION_BITS=projectVersion.tokenize(".")
           VNUM1="${VERSION_BITS[0]}"
