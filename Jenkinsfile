@@ -90,10 +90,8 @@ node () { //node('worker_node')
       
    
      stage('Build & Deploy Artifact') {
-          bat([script: 'mvn clean install']) 
+          bat([script: 'mvn clean install deploy']) 
           milestone label: 'After Build', ordinal: 1
-          
-          echo "Deploying to nexus or JFROG"
      }
      
      stage('Deploy Artifact') {
